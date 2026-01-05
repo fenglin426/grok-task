@@ -1,0 +1,12 @@
+grok-4.1-fast
+
+sk-0bJSrMXaPm4Uvvs9RzjDWYh3eO81UkNpYELtfTMPJGRTxl6C
+
+https://apipro.maynor1024.live/
+
+
+API端点
+模型支持的接口端点信息
+openai：
+/v1/chat/completions
+POST

@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "env": {
+    "GROK_API_KEY": "@grok_api_key",
+    "GROK_API_BASE": "@grok_api_base",
+    "GROK_MODEL": "@grok_model"
+  }
+}
