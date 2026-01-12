@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Plus, Play, Pause, Trash2, Clock, CheckCircle, XCircle, History, X, Settings } from 'lucide-react';
 import { getTasks, createTask, updateTask, deleteTask, getTaskExecutions, addExecution, getApiConfig, saveApiConfig, type Task, type ApiConfig } from '@/lib/clientStorage';
 import { executeTask } from '@/lib/clientGrokClient';
@@ -21,6 +21,7 @@ export default function Home() {
   const [showSettings, setShowSettings] = useState(false);
   const [executingTask, setExecutingTask] = useState<string | null>(null);
   const [apiConfig, setApiConfig] = useState<ApiConfig>({ apiKey: '', apiBase: '', model: '' });
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
     // 加载任务和配置
@@ -28,7 +29,12 @@ export default function Home() {
     setApiConfig(getApiConfig());
   }, []);
 
-  const handleCreateTaskFromTemplate = (template: Template) => {
+  const showNotification = useCallback((type: 'success' | 'error', message: string) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 3000);
+  }, []);
+
+  const handleCreateTaskFromTemplate = useCallback((template: Template) => {
     const newTask = createTask({
       name: template.name,
       description: template.description,
@@ -39,19 +45,19 @@ export default function Home() {
     });
     setTasks(getTasks());
     setShowTemplates(false);
-    alert('任务创建成功！');
-  };
+    showNotification('success', '任务创建成功！');
+  }, [showNotification]);
 
   const [executionResult, setExecutionResult] = useState<any>(null);
   const [showExecutionModal, setShowExecutionModal] = useState(false);
 
-  const handleExecuteTask = async (taskId: string) => {
+  const handleExecuteTask = useCallback(async (taskId: string) => {
     const task = tasks.find(t => t.id === taskId);
     if (!task) return;
 
     // 检查 API 配置
     if (!apiConfig.apiKey || !apiConfig.apiBase) {
-      alert('请先配置 API 设置！点击右上角设置按钮进行配置。');
+      showNotification('error', '请先配置 API 设置！点击右上角设置按钮进行配置。');
       setShowSettings(true);
       return;
     }
@@ -76,34 +82,34 @@ export default function Home() {
       });
       setShowExecutionModal(true);
     } catch (error: any) {
-      alert('执行任务失败: ' + error.message);
+      showNotification('error', '执行任务失败: ' + error.message);
     } finally {
       setExecutingTask(null);
     }
-  };
+  }, [tasks, apiConfig, showNotification]);
 
-  const handleDeleteTask = (taskId: string) => {
+  const handleDeleteTask = useCallback((taskId: string) => {
     if (!confirm('确定要删除这个任务吗？')) return;
     deleteTask(taskId);
     setTasks(getTasks());
-    alert('任务已删除');
-  };
+    showNotification('success', '任务已删除');
+  }, [showNotification]);
 
-  const handleToggleTaskStatus = (task: Task) => {
+  const handleToggleTaskStatus = useCallback((task: Task) => {
     const newStatus = task.status === 'active' ? 'paused' : 'active';
     updateTask(task.id, { status: newStatus });
     setTasks(getTasks());
-  };
+  }, []);
 
-  const handleSaveApiConfig = () => {
+  const handleSaveApiConfig = useCallback(() => {
     if (!apiConfig.apiKey || !apiConfig.apiBase) {
-      alert('请填写 API 密钥和地址！');
+      showNotification('error', '请填写 API 密钥和地址！');
       return;
     }
     saveApiConfig(apiConfig);
     setShowSettings(false);
-    alert('API 配置已保存！');
-  };
+    showNotification('success', 'API 配置已保存！');
+  }, [apiConfig, showNotification]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -118,25 +124,43 @@ export default function Home() {
     }
   };
 
-  const groupedTemplates = templates.reduce((acc, template) => {
-    if (!acc[template.category]) {
-      acc[template.category] = [];
-    }
-    acc[template.category].push(template);
-    return acc;
-  }, {} as Record<string, Template[]>);
+  const groupedTemplates = useMemo(() => {
+    return templates.reduce((acc, template) => {
+      if (!acc[template.category]) {
+        acc[template.category] = [];
+      }
+      acc[template.category].push(template);
+      return acc;
+    }, {} as Record<string, Template[]>);
+  }, []);
 
   const [selectedTaskHistory, setSelectedTaskHistory] = useState<string | null>(null);
   const [taskExecutions, setTaskExecutions] = useState<any[]>([]);
 
-  const viewHistory = (taskId: string) => {
+  const viewHistory = useCallback((taskId: string) => {
     const executions = getTaskExecutions(taskId);
     setTaskExecutions(executions);
     setSelectedTaskHistory(taskId);
-  };
+  }, []);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-8">
+      {/* Notification Toast */}
+      {notification && (
+        <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all transform animate-in slide-in-from-right ${
+          notification.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+        }`}>
+          <div className="flex items-center gap-2">
+            {notification.type === 'success' ? (
+              <CheckCircle className="w-5 h-5" />
+            ) : (
+              <XCircle className="w-5 h-5" />
+            )}
+            <span>{notification.message}</span>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">

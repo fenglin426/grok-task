@@ -29,6 +29,9 @@ export async function callGrokAPI(
       };
     }
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
+
     const response = await fetch(`${config.apiBase}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -46,17 +49,28 @@ export async function callGrokAPI(
         temperature: options.temperature || 0.7,
         max_tokens: options.max_tokens || 4000,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.error?.message || errorData.message || `HTTP ${response.status}: ${response.statusText}`;
       return {
         success: false,
-        error: errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`,
+        error: errorMessage,
       };
     }
 
     const data = await response.json();
+
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      return {
+        success: false,
+        error: 'API 返回数据格式错误',
+      };
+    }
 
     return {
       success: true,
@@ -65,9 +79,17 @@ export async function callGrokAPI(
     };
   } catch (error: any) {
     console.error('Grok API Error:', error);
+
+    if (error.name === 'AbortError') {
+      return {
+        success: false,
+        error: '请求超时（30秒），请稍后重试',
+      };
+    }
+
     return {
       success: false,
-      error: error.message || '网络请求失败',
+      error: error.message || '网络请求失败，请检查网络连接',
     };
   }
 }
