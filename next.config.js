@@ -1,9 +1,14 @@
 /** @type {import('next').NextConfig} */
+const isGitHubPages = process.env.DEPLOY_TARGET === 'github-pages';
+
 const nextConfig = {
   reactStrictMode: true,
   output: 'export',
-  basePath: '/grok-task',
-  assetPrefix: '/grok-task',
+  // 只在 GitHub Pages 部署时添加 basePath
+  ...(isGitHubPages && {
+    basePath: '/grok-task',
+    assetPrefix: '/grok-task',
+  }),
   images: {
     unoptimized: true,
   },

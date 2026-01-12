@@ -175,30 +175,66 @@ grok-task/
 └── package.json
 \`\`\`
 
-## 其他部署方式
+## 🚀 其他部署方式
 
-### Vercel
+### Vercel 部署（推荐）✨
 
-1. 导入 GitHub 仓库到 Vercel
-2. 自动检测为 Next.js 项目
-3. 点击 Deploy
+Vercel 部署更简单，自动配置环境，无需手动设置路径：
 
-### Netlify
+#### 一键部署
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/xianyu110/grok-task)
+
+#### 手动部署步骤
+
+1. **导入项目**
+   - 访问 [vercel.com](https://vercel.com)
+   - 点击 "New Project"
+   - 导入 GitHub 仓库 `xianyu110/grok-task`
+
+2. **配置项目**
+   - Framework Preset: 自动检测为 `Next.js`
+   - Build Command: `npm run build`（自动检测）
+   - Output Directory: `out`（自动检测）
+   - Install Command: `npm install`（自动检测）
+
+3. **环境变量（可选）**
+   ```bash
+   DEPLOY_TARGET=vercel
+   ```
+
+4. **部署**
+   - 点击 "Deploy" 按钮
+   - 等待 30-60 秒
+   - 自动获得 `https://your-project.vercel.app` 域名
+
+#### Vercel 优势
+
+- ✅ **零配置**：自动检测 Next.js 项目
+- ✅ **全球 CDN**：快速的内容分发
+- ✅ **自动 HTTPS**：免费 SSL 证书
+- ✅ **预览部署**：每个 PR 自动生成预览链接
+- ✅ **无路径前缀**：直接访问根路径，无需 `/grok-task`
+- ✅ **自动部署**：推送到 main 分支自动更新
+
+### Netlify 部署
 
 1. 在 Netlify 导入 GitHub 仓库
-2. Build command: \`npm run build\`
-3. Publish directory: \`out\`
-4. 点击 Deploy
+2. 配置构建设置：
+   - Build command: `npm run build`
+   - Publish directory: `out`
+   - Environment variables: `DEPLOY_TARGET=netlify`
+3. 点击 Deploy
 
 ### 本地预览
 
-\`\`\`bash
-# 构建
+```bash
+# 构建项目
 npm run build
 
 # 使用 serve 预览（需要安装 serve）
 npx serve out
-\`\`\`
+```
 
 ## ❓ 常见问题
 

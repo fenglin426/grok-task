@@ -3,9 +3,29 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
+  "outputDirectory": "out",
   "env": {
-    "GROK_API_KEY": "@grok_api_key",
-    "GROK_API_BASE": "@grok_api_base",
-    "GROK_MODEL": "@grok_model"
-  }
+    "DEPLOY_TARGET": "vercel"
+  },
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
 }
