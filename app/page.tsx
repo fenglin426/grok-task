@@ -144,7 +144,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-8">
+    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-4 md:p-8">
       {/* Notification Toast */}
       {notification && (
         <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all transform animate-in slide-in-from-right ${
@@ -163,34 +163,46 @@ export default function Home() {
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              Grok Tasks Manager
-            </h1>
+        <div className="mb-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-2">
+                Grok Tasks Manager
+              </h1>
+              <p className="text-gray-400 text-sm md:text-base">管理你的 Grok 自动化任务 - 纯前端版本</p>
+            </div>
             <button
               onClick={() => setShowSettings(true)}
-              className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors text-sm"
             >
-              <Settings className="w-5 h-5" />
+              <Settings className="w-4 h-4" />
               API 设置
             </button>
           </div>
-          <p className="text-gray-400 mb-3">管理你的 Grok 自动化任务 - 纯前端版本</p>
-          <div className="bg-blue-900 bg-opacity-30 border border-blue-500 rounded-lg p-4 max-w-4xl">
-            <p className="text-blue-300 text-sm">
-              <span className="font-semibold">💡 纯前端应用：</span>
-              数据存储在浏览器 localStorage，API 密钥可自定义。
-              推荐使用 <code className="bg-blue-800 px-2 py-1 rounded">https://apipro.maynor1024.live/v1</code> 中转服务
-            </p>
-          </div>
+
+          {/* Collapsible Info */}
+          <details className="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg overflow-hidden group">
+            <summary className="px-4 py-3 cursor-pointer hover:bg-gray-700 transition-colors flex items-center gap-2 text-sm text-gray-300">
+              <span className="font-semibold">💡 使用提示</span>
+              <span className="text-xs text-gray-500">(点击展开/收起)</span>
+            </summary>
+            <div className="px-4 pb-4 pt-2 text-sm text-gray-400 border-t border-gray-700">
+              <p className="mb-2">
+                <span className="font-semibold text-gray-300">纯前端应用：</span>
+                数据存储在浏览器 localStorage，API 密钥可自定义。
+              </p>
+              <p>
+                推荐使用 <code className="bg-gray-900 px-2 py-1 rounded text-blue-400">https://apipro.maynor1024.live/v1</code> 中转服务
+              </p>
+            </div>
+          </details>
         </div>
 
         {/* Action Buttons */}
-        <div className="mb-8 flex gap-4">
+        <div className="mb-6">
           <button
             onClick={() => setShowTemplates(!showTemplates)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium transition-all transform hover:scale-105 shadow-lg"
           >
             <Plus className="w-5 h-5" />
             {showTemplates ? '关闭模板库' : '从模板创建任务'}
@@ -229,9 +241,21 @@ export default function Home() {
         <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
           <h2 className="text-2xl font-bold mb-6">我的任务</h2>
           {tasks.length === 0 ? (
-            <div className="text-center py-12 text-gray-400">
-              <p className="mb-4">还没有任务</p>
-              <p className="text-sm">从模板库创建你的第一个任务吧！</p>
+            <div className="text-center py-16">
+              <div className="mb-6 flex justify-center">
+                <div className="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-12 h-12 text-gray-500" />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-300 mb-3">还没有任务</h3>
+              <p className="text-gray-400 mb-6">开始创建你的第一个 Grok 任务，开启自动化之旅！</p>
+              <button
+                onClick={() => setShowTemplates(true)}
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium transition-all transform hover:scale-105 shadow-lg"
+              >
+                <Plus className="w-5 h-5" />
+                立即创建任务
+              </button>
             </div>
           ) : (
             <div className="space-y-4">
