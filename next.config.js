@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
-const isGitHubPages = process.env.DEPLOY_TARGET === 'github-pages';
+//const isGitHubPages = process.env.DEPLOY_TARGET === 'github-pages';
+const isGitHubPages = process.env.GITHUB_ACTIONS === 'true';
 
 const nextConfig = {
   reactStrictMode: true,
@@ -16,3 +17,4 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
+
